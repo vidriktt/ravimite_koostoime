@@ -1,0 +1,97 @@
+// headings
+@mixin heading() {
+	font-family: 'Lato', sans-serif;
+	font-weight: 700;
+	font-size: 80px;
+	line-height: 80px;
+	font-style: normal;
+	color: $primary-color;
+	text-transform: uppercase;
+}
+
+@mixin heading-2() {
+	font-family: 'Lato', sans-serif;
+	font-size: 48px;
+	font-style: normal;
+	color: $primary-color;
+	text-transform: uppercase;
+}
+
+@mixin heading-3($font-26: false) {
+	font-family: 'Lato', sans-serif;
+	font-size: 32px;
+	font-style: normal;
+	color: $primary-color;
+	text-transform: uppercase;
+
+	@if $font-26 {
+		font-size: 26px;
+	}
+}
+
+@mixin heading-4() {
+	font-family: $inter-font;
+	font-weight: 500;
+	font-size: 24px;
+	font-style: normal;
+	color: $primary-color;
+
+	&:first-letter {
+		text-transform: uppercase;
+	}
+}
+
+@mixin supporting-heading() {
+	font-family: $inter-font;
+	font-weight: 700;
+	color: $primary-color;
+	text-transform: uppercase;
+}
+
+@mixin larger-text() {
+	font-size: 20px;
+
+	&:first-letter {
+		text-transform: uppercase;
+	}
+}
+
+@mixin smaller-text() {
+	font-size: 12px;
+
+	&:first-letter {
+		text-transform: uppercase;
+	}
+}
+
+// buttons
+@mixin button-primary() {
+	all: unset;
+	padding: $whitespace-sm $whitespace-lg;
+	border-radius: $border-radius;
+	background-color: $secondary-color-3;
+	color: $text-color-light;
+	font-family: $crg-inter-font;
+	font-weight: 600;
+	line-height: normal;
+	white-space: nowrap;
+	cursor: pointer;
+	user-select: none;
+	transition: all $transition;
+
+	&:hover {
+		background-color: $secondary-color-dark;
+	}
+
+	&:active {
+		background-color: $secondary-color-3;
+	}
+
+	&:focus-visible {
+		outline: 0.15rem solid $primary-color;
+	}
+
+	@media (min-width: $screen-md) {
+		padding: $whitespace-xxs $whitespace-md;
+	}
+}

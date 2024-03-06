@@ -1,0 +1,47 @@
+// colors
+$primary-color: #386fa4;
+$primary-color-2: #b0e0e6;
+//$primary-color-hover: #3c3ca5;
+//$primary-color-light: #ceceff;
+$secondary-color: #007ba7;
+$secondary-color-2: #b0c4de;
+$secondary-color-3: #008080;
+$secondary-color-4: #4682b4;
+$secondary-color-dark: #2b4141;
+$secondary-color-light: #e8f1f8;
+$error-color: #d52c2c;
+$warning-color: #fff0bd;
+
+$text-color: #1e1e1e;
+$text-color-2: #100b00;
+$text-color-light: #fff;
+$border-color: #e6e6e6;
+
+$light-gray: #dedede;
+$medium-gray: #898b8d;
+$gray: #6a6a6a;
+
+//fonts
+$inter-font: 'Inter', sans-serif;
+
+//whitespaces
+$whitespace-step: 4px;
+$whitespace-xxs: $whitespace-step * 2; //8px
+$whitespace-xs: $whitespace-step * 3; //12px
+$whitespace-sm: $whitespace-step * 4; //16px
+$whitespace-md: $whitespace-step * 6; //24px
+$whitespace-lg: $whitespace-step * 8; //32px
+$whitespace-xl: $whitespace-step * 12; //48px
+$whitespace-xxl: $whitespace-step * 16; //64px
+$whitespace-xxxl: $whitespace-step * 20; //80px
+
+// screen sizes
+$screen-sm: 576px;
+$screen-md: 768px;
+$screen-lg: 992px;
+$screen-xl: 1200px;
+$screen-xxl: 1440px;
+
+// misc
+$border-radius: 8px;
+$transition: 150ms ease;
