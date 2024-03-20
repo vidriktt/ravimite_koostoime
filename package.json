@@ -20,15 +20,21 @@
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.2",
+    "fs": "^0.0.1-security",
     "nuxt": "^3.9.0",
+    "pg": "^8.11.3",
     "prettier": "^3.1.1",
     "sass": "^1.69.7",
     "typescript": "^5.3.3",
     "vue": "^3.4.5",
     "vue-router": "^4.2.5",
-    "vue-tsc": "^1.8.27"
+    "vue-tsc": "^1.8.27",
+    "xml2js": "^0.6.2"
   },
   "dependencies": {
+    "@prisma/cli": "^2.20.1",
+    "@prisma/client": "^5.11.0",
+    "prisma": "^5.11.0",
     "stylelint": "^16.1.0",
     "stylelint-scss": "^6.0.0"
   }
