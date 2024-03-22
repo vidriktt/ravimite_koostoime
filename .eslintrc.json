@@ -1,0 +1,36 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "@nuxtjs/eslint-config-typescript",
+        "plugin:prettier/recommended",
+        "plugin:nuxt/recommended"
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "parser": "@typescript-eslint/parser",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint",
+        "vue"
+    ],
+    "rules": {
+        "prettier/prettier": [
+            "error",
+            {
+                "singleQuote": true,
+                "useTabs": true,
+                "semi": true,
+                "tabWidth": 4
+            }
+        ],
+        "no-console": [
+            "warn"
+        ],
+        "vue/multi-word-component-names": "off",
+        "vue/no-v-html": "off"
+    }
+}

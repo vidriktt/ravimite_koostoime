@@ -1,8 +1,6 @@
 <template>
 	<div>
-		<NuxtLayout name="default">
-			<NuxtPage />
-		</NuxtLayout>
+		<NuxtPage />
 	</div>
 </template>
 
@@ -34,7 +32,7 @@ html {
 		sans-serif;
 	font-size: 16px;
 	line-height: 1.5;
-	color: $text-color;
+	color: $color-text;
 	-ms-text-size-adjust: 100%;
 	-webkit-text-size-adjust: 100%;
 	-moz-osx-font-smoothing: grayscale;
@@ -52,16 +50,16 @@ html {
 
 *:focus,
 *:focus-visible {
-	outline-color: $primary-color;
+	outline: $color-primary;
 }
 
 ::selection {
-	color: $primary-color-2;
-	background-color: $secondary-color-3;
+	color: $color-primary-2;
+	background: $color-secondary-3;
 }
 
 ::-moz-selection {
-	color: $primary-color-2;
-	background-color: $secondary-color-3;
+	color: $color-primary-2;
+	background: $color-secondary-3;
 }
 </style>

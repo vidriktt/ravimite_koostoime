@@ -5,7 +5,8 @@
 	font-size: 80px;
 	line-height: 80px;
 	font-style: normal;
-	color: $primary-color;
+	letter-spacing: 0.03rem;
+	color: $color-primary;
 	text-transform: uppercase;
 }
 
@@ -13,7 +14,8 @@
 	font-family: 'Lato', sans-serif;
 	font-size: 48px;
 	font-style: normal;
-	color: $primary-color;
+	letter-spacing: 0.03rem;
+	color: $color-primary;
 	text-transform: uppercase;
 }
 
@@ -21,7 +23,8 @@
 	font-family: 'Lato', sans-serif;
 	font-size: 32px;
 	font-style: normal;
-	color: $primary-color;
+	letter-spacing: 0.03rem;
+	color: $color-primary;
 	text-transform: uppercase;
 
 	@if $font-26 {
@@ -30,11 +33,12 @@
 }
 
 @mixin heading-4() {
-	font-family: $inter-font;
+	font-family: $font-inter;
 	font-weight: 500;
 	font-size: 24px;
 	font-style: normal;
-	color: $primary-color;
+	letter-spacing: 0.03rem;
+	color: $color-primary;
 
 	&:first-letter {
 		text-transform: uppercase;
@@ -42,12 +46,15 @@
 }
 
 @mixin supporting-heading() {
-	font-family: $inter-font;
+	font-family: $font-inter;
 	font-weight: 700;
-	color: $primary-color;
+	letter-spacing: 0.03rem;
+	color: $color-primary;
 	text-transform: uppercase;
 }
 
+
+// text
 @mixin larger-text() {
 	font-size: 20px;
 
@@ -65,33 +72,87 @@
 }
 
 // buttons
-@mixin button-primary() {
+@mixin button-primary($short: false) {
 	all: unset;
 	padding: $whitespace-sm $whitespace-lg;
 	border-radius: $border-radius;
-	background-color: $secondary-color-3;
-	color: $text-color-light;
-	font-family: $crg-inter-font;
+	background: $color-secondary-3;
+	color: $color-text-light;
+	font-family: $font-inter;
 	font-weight: 600;
 	line-height: normal;
+	letter-spacing: 0.03rem;
 	white-space: nowrap;
 	cursor: pointer;
 	user-select: none;
 	transition: all $transition;
 
 	&:hover {
-		background-color: $secondary-color-dark;
+		background: $color-secondary-dark;
 	}
 
 	&:active {
-		background-color: $secondary-color-3;
+		background: $color-secondary-3;
 	}
 
 	&:focus-visible {
-		outline: 0.15rem solid $primary-color;
+		outline: 0.15rem solid $color-primary;
 	}
 
 	@media (min-width: $screen-md) {
 		padding: $whitespace-xxs $whitespace-md;
+	}
+
+	@if $short {
+		padding: $whitespace-step $whitespace-md !important;
+	}
+}
+
+@mixin button-link() {
+	all: unset;
+	border-bottom: 1px solid transparent;
+	cursor: pointer;
+	transition: all 100ms;
+
+	&:hover {
+		color: $color-text-2;
+		border-bottom: 1px solid $color-text-2;
+	}
+
+	&:active {
+		color: $color-text;
+		border-bottom: 1px solid $color-text;
+	}
+}
+
+// misc
+@mixin input($button: false) {
+	all: unset;
+	height: fit-content;
+	padding: $whitespace-step $whitespace-sm;
+	border-radius: $border-radius;
+	background: $color-secondary-light;
+	font-family: $font-inter;
+	font-weight: 400;
+	line-height: normal;
+	white-space: nowrap;
+	cursor: pointer;
+	user-select: none;
+	transition: all $transition;
+
+	&:focus-visible {
+		outline: 0.15rem solid $color-primary;
+	}
+
+	@if $button {
+		padding: 0 calc($whitespace-xxs + 2px);
+		color: rgba($color-text, 0.7);
+		font-size: 1.5rem;
+		line-height: 1.95rem;
+
+		&:hover {
+			filter: brightness(0.95);
+			color: $color-text;
+		}
 	}
 }
