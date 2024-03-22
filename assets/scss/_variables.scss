@@ -1,28 +1,28 @@
 // colors
-$primary-color: #386fa4;
-$primary-color-2: #b0e0e6;
-//$primary-color-hover: #3c3ca5;
-//$primary-color-light: #ceceff;
-$secondary-color: #007ba7;
-$secondary-color-2: #b0c4de;
-$secondary-color-3: #008080;
-$secondary-color-4: #4682b4;
-$secondary-color-dark: #2b4141;
-$secondary-color-light: #e8f1f8;
-$error-color: #d52c2c;
-$warning-color: #fff0bd;
+$color-primary: #386fa4;
+$color-primary-2: #b0e0e6;
+//$color-primary-hover: #3c3ca5;
+//$color-primary-light: #ceceff;
+$color-secondary: #007ba7;
+$color-secondary-2: #b0c4de;
+$color-secondary-3: #008080;
+$color-secondary-4: #4682b4;
+$color-secondary-dark: #2b4141;
+$color-secondary-light: #e8f1f8;
+$color-error: #d52c2c;
+$color-warning: #fff0bd;
 
-$text-color: #1e1e1e;
-$text-color-2: #100b00;
-$text-color-light: #fff;
-$border-color: #e6e6e6;
+$color-text: #1e1e1e;
+$color-text-2: #100b00;
+$color-text-light: #fff;
+$color-border: #e6e6e6;
 
 $light-gray: #dedede;
 $medium-gray: #898b8d;
 $gray: #6a6a6a;
 
 //fonts
-$inter-font: 'Inter', sans-serif;
+$font-inter: 'Inter', sans-serif;
 
 //whitespaces
 $whitespace-step: 4px;
@@ -45,3 +45,4 @@ $screen-xxl: 1440px;
 // misc
 $border-radius: 8px;
 $transition: 150ms ease;
+$transition-short: 100ms ease;
