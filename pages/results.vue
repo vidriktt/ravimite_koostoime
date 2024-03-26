@@ -10,32 +10,19 @@
 				@on-submit="onSubmit"
 			/>
 			<div class="results__container">
-				<h4>Leitud koostoimed:</h4>
-				<div class="results__container--results">
-					<h5>Toimeaine 1 + Toimeaine 2</h5>
-				</div>
-			</div>
-
-			<div class="results__button">
-				<button v-if="!interactions" @click="fetchInteractions">
-					Display Interaction
-				</button>
-				<div v-if="interactions">
-					<p>
-						<strong>Severity:</strong> {{ interactions.severity }}
-					</p>
-					<p v-if="interactions.situation_criterion">
-						<strong>Situation Criterion:</strong>
-						{{ interactions.situation_criterion }}
-					</p>
-					<p>
-						<strong>Clinical Consequence:</strong>
-						{{ interactions.clinical_consequence }}
-					</p>
-					<p v-if="interactions.instructions">
-						<strong>Instructions:</strong>
-						{{ interactions.instructions }}
-					</p>
+				<h4 v-if="Object.keys(route.query).length > 0">
+					{{
+						interactionsList && interactionsList.length > 0
+							? 'Leitud koostoimed:'
+							: 'Koostoimed puuduvad'
+					}}
+				</h4>
+				<div v-if="interactionsList && interactionsList.length > 0">
+					<Interaction
+						v-for="(interaction, index) in interactionsList"
+						:key="index"
+						:interaction="interaction"
+					/>
 				</div>
 			</div>
 		</div>
@@ -43,15 +30,20 @@
 </template>
 
 <script setup lang="ts">
+import type { interactions } from '@prisma/client';
+
 const route = useRoute();
+const interactionsList = ref<interactions[]>([]);
 
-const interactions = ref();
-
-onMounted(() => {
+onMounted(async () => {
 	if (Object.keys(route.query).length > 0) {
-		fetchInteractions();
+		await fetchInteractions();
 	}
 });
+
+const onSubmit = () => {
+	fetchInteractions();
+};
 
 const fetchInteractions = async () => {
 	try {
@@ -60,15 +52,74 @@ const fetchInteractions = async () => {
 		});
 
 		if (response.data?.value) {
-			interactions.value = response.data.value[0];
+			interactionsList.value = response.data.value;
+			await fetchTranslations();
 		}
 	} catch (error) {
-		console.error(error);
+		console.error(error); // eslint-disable-line no-console
 	}
 };
 
-const onSubmit = () => {
-	fetchInteractions();
+const fetchTranslations = async () => {
+	try {
+		const textsToTranslate: {
+			text: string;
+			field: string;
+			index: number;
+		}[] = [];
+
+		interactionsList.value.forEach((interaction, interactionIndex) => {
+			if (interaction.situation_criterion) {
+				textsToTranslate.push({
+					text: interaction.situation_criterion,
+					field: 'situation_criterion',
+					index: interactionIndex,
+				});
+			}
+			if (interaction.clinical_consequence) {
+				textsToTranslate.push({
+					text: interaction.clinical_consequence,
+					field: 'clinical_consequence',
+					index: interactionIndex,
+				});
+			}
+			if (interaction.instructions) {
+				textsToTranslate.push({
+					text: interaction.instructions,
+					field: 'instructions',
+					index: interactionIndex,
+				});
+			}
+		});
+
+		const translationResponses = await Promise.all(
+			textsToTranslate.map(({ text, field }) =>
+				useFetch('/api/translate', {
+					query: {
+						text,
+						source: 'no',
+						target: 'et',
+					},
+				}).then((response) => ({ response, field })),
+			),
+		);
+
+		translationResponses.forEach(({ response, field }) => {
+			const translatedText = response.data?.value;
+
+			if (translatedText !== undefined) {
+				const { index } = textsToTranslate.find(
+					({ field: f }) => f === field,
+				) || { index: -1 };
+				if (index !== -1) {
+					(interactionsList.value[index] as any)[field] =
+						translatedText;
+				}
+			}
+		});
+	} catch (error) {
+		console.error(error); // eslint-disable-line no-console
+	}
 };
 </script>
 
@@ -76,24 +127,10 @@ const onSubmit = () => {
 .results {
 	margin: $whitespace-xl;
 
-	&__button {
-		display: flex;
-		justify-content: center;
-		margin-top: $whitespace-xl;
-
-		div {
-			max-width: 50vw;
-		}
-
-		p {
-			margin-bottom: 10px;
-		}
-	}
-
 	&__container {
 		display: flex;
 		flex-direction: column;
-		width: 60vw;
+		width: 55vw;
 		margin: $whitespace-xxxl auto;
 
 		h4 {
@@ -101,18 +138,6 @@ const onSubmit = () => {
 			color: $color-text;
 			font-size: 28px;
 			text-transform: uppercase;
-		}
-
-		&--results {
-			display: flex;
-			flex-direction: column;
-			margin-top: $whitespace-xl;
-
-			h5 {
-				@include heading-4;
-				color: $color-text;
-				font-size: 20px;
-			}
 		}
 	}
 }

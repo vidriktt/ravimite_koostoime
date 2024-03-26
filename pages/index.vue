@@ -8,6 +8,12 @@
 				<Disclaimer />
 			</div>
 			<SearchForm />
+			<router-link
+				class="index__example-btn"
+				to="/results?field1=ruksolitiniib&field2=botsepreviir"
+			>
+				Näidispäring
+			</router-link>
 		</div>
 	</NuxtLayout>
 </template>
@@ -40,6 +46,14 @@
 		display: flex;
 		justify-content: center;
 		margin-top: $whitespace-xxl;
+	}
+
+	&__example-btn {
+		@include button-primary;
+		display: flex;
+		justify-content: center;
+		width: fit-content;
+		margin: $whitespace-xxxl auto 0;
 	}
 }
 </style>

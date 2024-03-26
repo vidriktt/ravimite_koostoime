@@ -4,7 +4,7 @@ import xml.dom.minidom as minidom
 namespace = "http://www.kith.no/xmlstds/eresept/m30/2014-12-01"
 ET.register_namespace('', namespace)
 
-xml_file_path = 'fest251.xml'
+xml_file_path = '../data/fest251.xml'
 tree = ET.parse(xml_file_path)
 root = tree.getroot()
 
@@ -70,7 +70,7 @@ for oppf_interaksjon in root.findall(".//ns:OppfInteraksjon", namespaces=ns):
 								new_atc.set(atc_attr_key, atc_attr_value)
 
 new_tree = ET.ElementTree(new_root)
-new_xml_file_path = "drug_interactions.xml"
+new_xml_file_path = "../data/drug_interactions.xml"
 new_tree.write(new_xml_file_path, encoding="utf-8", xml_declaration=True, method="xml", short_empty_elements=False)
 
 xml_content = ET.tostring(new_root, encoding="utf-8", method="xml").decode()

@@ -8,19 +8,58 @@ datasource db {
 }
 
 model drugs {
-  id             Int           @id @default(autoincrement())
-  interaction_id Int?
-  drug_name      String?       @db.VarChar(255)
-  atc            String?       @db.VarChar(255)
-  interactions   interactions? @relation(fields: [interaction_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                      Int                      @id @default(autoincrement())
+  interaction_id          Int?
+  drug_group_id           Int?
+  drug_name               String?                  @db.VarChar(255)
+  atc                     String?
+  toimeaine               String?                  @db.VarChar(255)
+  interaction_drug_groups interaction_drug_groups? @relation(fields: [drug_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  interactions            interactions?            @relation(fields: [interaction_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model interactions {
-  id                   Int     @id @default(autoincrement())
-  severity_value       Int?
-  severity             String? @db.VarChar(255)
-  situation_criterion  String?
-  clinical_consequence String?
-  instructions         String?
-  drugs                drugs[]
+  id                      Int                       @id @default(autoincrement())
+  severity                String?                   @db.VarChar(255)
+  severity_value          String?                   @db.VarChar(255)
+  situation_criterion     String?
+  clinical_consequence    String?
+  instructions            String?
+  drugs                   drugs[]
+  interaction_drug_groups interaction_drug_groups[]
+}
+
+model drugbank_drug_interactions {
+  id             Int            @id @default(autoincrement())
+  drug_id        Int
+  drugbank_id    String?        @db.VarChar(255)
+  name           String?        @db.VarChar(255)
+  description    String?
+  drugbank_drugs drugbank_drugs @relation(fields: [drug_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model drugbank_drugs {
+  id                         Int                          @id @default(autoincrement())
+  drugbank_id                String                       @db.VarChar(255)
+  name                       String                       @db.VarChar(255)
+  description                String?
+  atc_codes                  String[]
+  drugbank_drug_interactions drugbank_drug_interactions[]
+  drugbank_food_interactions drugbank_food_interactions[]
+}
+
+model drugbank_food_interactions {
+  id             Int            @id @default(autoincrement())
+  drug_id        Int
+  interaction    String?
+  drugbank_drugs drugbank_drugs @relation(fields: [drug_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model interaction_drug_groups {
+  id             Int           @id @default(autoincrement())
+  interaction_id Int?
+  drug_group     Int?
+  atc            String?
+  drugs          drugs[]
+  interactions   interactions? @relation(fields: [interaction_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
