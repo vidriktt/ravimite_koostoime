@@ -1,9 +1,10 @@
 <template>
 	<div class="disclaimer">
 		<p v-if="!text">
+			<IconsWarning />
 			See <b>leht on teoreetiline</b> ning ükski saadud tulemus
-			<b>ei ole lõplik meditsiiniline vastus</b>.<br />Päris küsimuste ja
-			probleemide korral pöörduge meditsiinilise kõrgharidusega
+			<b>ei ole lõplik meditsiiniline vastus</b>.<br />Oluliste küsimuste
+			ja probleemide korral pöörduge meditsiinilise kõrgharidusega
 			spetsialisti juurde!
 		</p>
 		<p v-if="text" v-html="text"></p>
@@ -20,6 +21,7 @@ withDefaults(defineProps<Props>(), { text: undefined });
 
 <style lang="scss" scoped>
 .disclaimer {
+	display: flex;
 	align-self: center;
 	width: fit-content;
 	margin-top: $whitespace-xxxl;
@@ -28,5 +30,10 @@ withDefaults(defineProps<Props>(), { text: undefined });
 	color: $color-text-light;
 	border-radius: $border-radius;
 	text-align: center;
+
+	svg {
+		vertical-align: text-top;
+		margin-right: $whitespace-step;
+	}
 }
 </style>

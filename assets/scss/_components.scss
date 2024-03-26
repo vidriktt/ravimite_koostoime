@@ -13,6 +13,7 @@
 @mixin heading-2() {
 	font-family: 'Lato', sans-serif;
 	font-size: 48px;
+	line-height: 48px;
 	font-style: normal;
 	letter-spacing: 0.03rem;
 	color: $color-primary;
@@ -22,6 +23,7 @@
 @mixin heading-3($font-26: false) {
 	font-family: 'Lato', sans-serif;
 	font-size: 32px;
+	line-height: 32px;
 	font-style: normal;
 	letter-spacing: 0.03rem;
 	color: $color-primary;
@@ -36,12 +38,28 @@
 	font-family: $font-inter;
 	font-weight: 500;
 	font-size: 24px;
+	line-height: 24px;
 	font-style: normal;
 	letter-spacing: 0.03rem;
 	color: $color-primary;
 
 	&:first-letter {
 		text-transform: uppercase;
+	}
+}
+
+@mixin heading-5($capitalized: true) {
+	font-family: $font-inter;
+	font-weight: 500;
+	font-size: 20px;
+	line-height: 20px;
+	font-style: normal;
+	letter-spacing: 0.03rem;
+
+	@if $capitalized {
+		&:first-letter {
+			text-transform: uppercase;
+		}
 	}
 }
 

@@ -1,35 +1,37 @@
 import { PrismaClient } from '@prisma/client';
 
+interface InteractionId {
+	id: number;
+}
+
 const prisma = new PrismaClient();
 
 export default eventHandler(async (event) => {
 	const queryDrugs = getQuery(event).drugs as Array<string>;
 
-	const drugs = await prisma.drugs.findMany({
-		select: {
-			interaction_id: true,
-		},
-		where: {
-			drug_name: {
-				equals: queryDrugs[0],
-				mode: 'insensitive',
-			},
-		},
-	});
+	const interactionIds: InteractionId[] = (await prisma.$queryRaw<number[]>`
+    SELECT DISTINCT interaction.id
+    FROM interactions interaction
+    JOIN drugs drug1 ON interaction.id = drug1.interaction_id
+    JOIN drugs drug2 ON drug1.interaction_id = drug2.interaction_id
+    WHERE drug1.toimeaine = ${queryDrugs[0]} AND drug2.toimeaine = ${queryDrugs[1]}
+`) as unknown as InteractionId[];
 
-	if (!drugs) {
+	if (!interactionIds || interactionIds.length === 0) {
 		throw createError({
 			statusCode: 404,
-			statusMessage: 'Drug not found',
+			statusMessage: 'Interactions not found',
 		});
 	}
 
-	const interactionIds = drugs.map((drug) => drug.interaction_id);
+	const interactionIdsArray = interactionIds.map(
+		(interactionId) => interactionId.id,
+	);
 
-	let interactions = await prisma.interactions.findMany({
+	const interactions = await prisma.interactions.findMany({
 		where: {
 			id: {
-				in: interactionIds as Array<number>,
+				in: interactionIdsArray,
 			},
 		},
 		include: {
@@ -37,18 +39,12 @@ export default eventHandler(async (event) => {
 		},
 	});
 
-	if (!interactions) {
+	if (!interactions || interactions.length === 0) {
 		throw createError({
 			statusCode: 404,
 			statusMessage: 'Interactions not found',
 		});
 	}
-
-	interactions = interactions.filter((interaction) => {
-		return interaction.drugs.some(
-			(drug) => drug.drug_name === queryDrugs[1],
-		);
-	});
 
 	return interactions;
 });
