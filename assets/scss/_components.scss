@@ -126,20 +126,34 @@
 	}
 }
 
-@mixin button-link() {
+@mixin button-link($grayscale: true) {
 	all: unset;
 	border-bottom: 1px solid transparent;
 	cursor: pointer;
 	transition: all 100ms;
 
-	&:hover {
-		color: $color-text-2;
-		border-bottom: 1px solid $color-text-2;
-	}
+	@if $grayscale {
+		&:hover {
+			color: $color-text-2;
+			border-bottom: 1px solid $color-text-2;
+		}
 
-	&:active {
-		color: $color-text;
-		border-bottom: 1px solid $color-text;
+		&:active {
+			color: $color-text;
+			border-bottom: 1px solid $color-text;
+		}
+	} @else {
+		color: $color-secondary;
+
+		&:hover {
+			color: $color-secondary-4;
+			border-bottom: 1px solid $color-secondary-4;
+		}
+
+		&:active {
+			color: $color-secondary;
+			border-bottom: 1px solid $color-secondary;
+		}
 	}
 }
 
