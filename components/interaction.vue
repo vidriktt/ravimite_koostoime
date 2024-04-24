@@ -65,6 +65,16 @@
 					</span>
 				</p>
 			</template>
+			<hr v-if="interaction.instructions && interaction.ravimiregister" />
+			<template v-if="interaction.ravimiregister">
+				<h5>Ravimiregistri koostoime infolehelt</h5>
+				<p class="interaction__content--ravimiregister">
+					{{ interaction.ravimiregister.text }}<br /><br />
+					<a :href="interaction.ravimiregister.url" target="_blank">
+						Pakendi infoleht
+					</a>
+				</p>
+			</template>
 		</div>
 	</div>
 </template>
@@ -73,7 +83,9 @@
 import type { interactions } from '@prisma/client';
 
 interface Props {
-	interaction: interactions;
+	interaction: interactions & {
+		ravimiregister?: { text: string; url: string };
+	};
 }
 
 defineProps<Props>();
@@ -129,7 +141,7 @@ const formatInstructions = (instruction: string) => {
 			font-size: 18px;
 			font-weight: 600;
 			letter-spacing: 0.04rem;
-			cursor: default;
+			cursor: help;
 
 			&.high {
 				border-color: $color-error;
@@ -172,6 +184,14 @@ const formatInstructions = (instruction: string) => {
 			grid-column: 1 / span 2;
 			border: none;
 			border-top: 1px solid $color-border;
+		}
+
+		&--ravimiregister {
+			white-space: break-spaces;
+
+			a {
+				@include button-link(false);
+			}
 		}
 	}
 }

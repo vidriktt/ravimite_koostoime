@@ -26,7 +26,7 @@ createReadStream('../data/atc.csv', { encoding: 'latin1' })
 		console.log('CSV file successfully processed.'); // eslint-disable-line no-console
 	});
 
-readFile('../data/drug_interactions.xml', 'utf8', async (err, data) => {
+readFile('../data/drug_interactions.xml', 'utf8', (err, data) => {
 	if (err) {
 		console.error(err); // eslint-disable-line no-console
 		return;

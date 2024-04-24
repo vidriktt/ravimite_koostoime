@@ -19,7 +19,6 @@
     "@types/pg": "^8.11.4",
     "@types/xml2js": "^0.4.14",
     "@typescript-eslint/parser": "^7.3.1",
-    "csv-parser": "^3.0.0",
     "dotenv": "^16.4.5",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
@@ -42,6 +41,8 @@
     "@prisma/cli": "^2.20.1",
     "@prisma/client": "^5.11.0",
     "axios": "^1.6.8",
+    "csv-parser": "^3.0.0",
+    "pdf-parse": "^1.1.1",
     "prisma": "^5.11.0",
     "stylelint": "^16.1.0",
     "stylelint-scss": "^6.0.0"
