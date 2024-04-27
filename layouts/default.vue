@@ -18,3 +18,9 @@ withDefaults(defineProps<Props>(), {
 	withoutDisclaimer: false,
 });
 </script>
+
+<style lang="scss" scoped>
+.layout-default {
+	min-height: 100vh;
+}
+</style>

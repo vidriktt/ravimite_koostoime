@@ -24,6 +24,7 @@
 }
 
 html {
+	position: relative;
 	font-family:
 		'Inter',
 		-apple-system,

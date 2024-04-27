@@ -1,19 +1,12 @@
 import { createReadStream, readFile } from 'fs';
 import { parseString } from 'xml2js';
-import pkg from 'pg';
+import { PrismaClient } from '@prisma/client';
 import csv from 'csv-parser';
 import dotenv from 'dotenv';
 
-const { Pool } = pkg; // eslint-disable-line
 dotenv.config({ path: '../.env' }); // eslint-disable-line
 
-const pool = new Pool({
-	user: process.env.DB_USER,
-	host: process.env.DB_HOST,
-	database: process.env.DB_NAME,
-	password: process.env.DB_PASSWORD,
-	port: process.env.DB_PORT,
-});
+const prisma = new PrismaClient();
 
 const toimeained = {};
 
@@ -38,107 +31,89 @@ readFile('../data/drug_interactions.xml', 'utf8', (err, data) => {
 			return;
 		}
 
-		const client = await pool.connect();
-
 		try {
-			await client.query('BEGIN');
+			const chunkSize = 10;
+			const interactions = result.DrugInteractions.Interaction;
 
-			const interactions = result.DrugInteractions.Interaction.map(
-				(interaction) => {
-					const drugGroups = interaction.DrugGroup.map(
-						(group, index) => ({
-							drug_group: index + 1,
-							atc: group.Drug.map((drug) =>
-								drug.Atc && drug.Atc[0]
-									? drug.Atc[0].$.V
-									: null,
-							),
-							drugs: group.Drug.map((drug) => ({
-								drug_name: drug.DrugName[0],
-								atc:
+			for (let i = 0; i < interactions.length; i += chunkSize) {
+				const chunk = interactions.slice(i, i + chunkSize);
+
+				await Promise.all(
+					chunk.map(async (interaction) => {
+						const drugGroups = interaction.DrugGroup.map(
+							(group, index) => ({
+								drug_group: index + 1,
+								atc: group.Drug.map((drug) =>
 									drug.Atc && drug.Atc[0]
 										? drug.Atc[0].$.V
 										: null,
-							})),
-						}),
-					);
+								),
+								drugs: group.Drug.map((drug) => ({
+									drug_name: drug.DrugName[0],
+									atc:
+										drug.Atc && drug.Atc[0]
+											? drug.Atc[0].$.V
+											: null,
+								})),
+							}),
+						);
 
-					return {
-						severity: interaction.Severity[0].$.DN,
-						severity_value: interaction.Severity[0].$.V,
-						situation_criterion: interaction.SituationCriterion
-							? interaction.SituationCriterion[0]
-							: null,
-						clinical_consequence:
-							interaction.ClinicalConsequence[0],
-						instructions: interaction.Instructions
-							? interaction.Instructions[0]
-							: null,
-						drugGroups,
-					};
-				},
-			);
+						const insertedInteraction =
+							await prisma.interactions.create({
+								data: {
+									severity: interaction.Severity[0].$.DN,
+									severity_value: interaction.Severity[0].$.V,
+									situation_criterion:
+										interaction.SituationCriterion
+											? interaction.SituationCriterion[0]
+											: null,
+									clinical_consequence:
+										interaction.ClinicalConsequence[0],
+									instructions: interaction.Instructions
+										? interaction.Instructions[0]
+										: null,
+									interaction_drug_groups: {
+										create: drugGroups.map((group) => ({
+											drug_group: group.drug_group,
+											atc: group.atc.join(','),
+										})),
+									},
+								},
+								include: {
+									interaction_drug_groups: true,
+								},
+							});
 
-			for (const interaction of interactions) {
-				const insertInteractionQuery = `
-                    INSERT INTO interactions (severity, severity_value, situation_criterion, clinical_consequence, instructions)
-                    VALUES ($1, $2, $3, $4, $5) RETURNING id;
-                `;
-				const interactionValues = [
-					interaction.severity,
-					interaction.severity_value,
-					interaction.situation_criterion,
-					interaction.clinical_consequence,
-					interaction.instructions,
-				];
+						await prisma.drugs.createMany({
+							data: drugGroups.flatMap((group) =>
+								group.drugs.map((drug) => ({
+									interaction_id: insertedInteraction.id,
+									drug_group_id:
+										insertedInteraction.interaction_drug_groups.find(
+											(interactionGroup) =>
+												interactionGroup.drug_group ===
+												group.drug_group,
+										).id,
+									drug_name: drug.drug_name,
+									atc: drug.atc,
+									toimeaine: toimeained[drug.atc],
+								})),
+							),
+						});
 
-				const { rows: interactionRows } = await client.query(
-					insertInteractionQuery,
-					interactionValues,
+						// eslint-disable-next-line no-console
+						console.log(
+							`Inserted interaction with ID: ${insertedInteraction.id}`,
+						);
+					}),
 				);
-				const interactionId = interactionRows[0].id;
-
-				for (const drugGroup of interaction.drugGroups) {
-					const insertDrugGroupQuery = `
-                        INSERT INTO interaction_drug_groups (interaction_id, drug_group, atc)
-                        VALUES ($1, $2, $3) RETURNING id;
-                    `;
-					const drugGroupValues = [
-						interactionId,
-						drugGroup.drug_group,
-						drugGroup.atc,
-					];
-					const { rows: drugGroupRows } = await client.query(
-						insertDrugGroupQuery,
-						drugGroupValues,
-					);
-					const drugGroupId = drugGroupRows[0].id;
-
-					for (const drug of drugGroup.drugs) {
-						const insertDrugQuery = `
-                            INSERT INTO drugs (interaction_id, drug_group_id, drug_name, atc, toimeaine)
-                            VALUES ($1, $2, $3, $4, $5);
-                        `;
-						const drugValues = [
-							interactionId,
-							drugGroupId,
-							drug.drug_name,
-							drug.atc,
-							toimeained[drug.atc],
-						];
-						await client.query(insertDrugQuery, drugValues);
-					}
-				}
 			}
 
-			await client.query('COMMIT');
 			console.log('Data inserted successfully.'); // eslint-disable-line no-console
-		} catch (err) {
-			console.error('Error inserting data:', err); // eslint-disable-line no-console
-			await client.query('ROLLBACK');
+		} catch (error) {
+			console.error('Transaction failed:', error); // eslint-disable-line no-console
 		} finally {
-			client.release();
-			await pool.end();
+			await prisma.$disconnect();
 		}
 	});
 });
