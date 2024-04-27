@@ -1,5 +1,5 @@
 <template>
-	<div class="disclaimer">
+	<div class="disclaimer" :class="{ fixed }">
 		<p v-if="!text">
 			<IconsWarning />
 			See <b>leht on teoreetiline</b> ning ükski saadud tulemus
@@ -14,9 +14,10 @@
 <script setup lang="ts">
 interface Props {
 	text?: string;
+	fixed?: boolean;
 }
 
-withDefaults(defineProps<Props>(), { text: undefined });
+withDefaults(defineProps<Props>(), { text: undefined, fixed: false });
 </script>
 
 <style lang="scss" scoped>
@@ -35,5 +36,14 @@ withDefaults(defineProps<Props>(), { text: undefined });
 		vertical-align: text-top;
 		margin-right: $whitespace-step;
 	}
+}
+
+.fixed {
+	position: fixed;
+	bottom: $whitespace-xxxl;
+	left: 50%;
+	transform: translateX(-50%);
+	margin-top: 0;
+	width: max-content;
 }
 </style>

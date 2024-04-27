@@ -67,7 +67,7 @@
 			</template>
 			<hr v-if="interaction.instructions && interaction.ravimiregister" />
 			<template v-if="interaction.ravimiregister">
-				<h5>Ravimiregistri koostoime infolehelt</h5>
+				<h5>Koostoime Ravimiregistri pakendi infolehelt</h5>
 				<p class="interaction__content--ravimiregister">
 					{{ interaction.ravimiregister.text }}<br /><br />
 					<a :href="interaction.ravimiregister.url" target="_blank">

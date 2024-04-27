@@ -40,6 +40,7 @@
   "dependencies": {
     "@prisma/cli": "^2.20.1",
     "@prisma/client": "^5.11.0",
+    "@supabase/supabase-js": "^2.42.5",
     "axios": "^1.6.8",
     "csv-parser": "^3.0.0",
     "pdf-parse": "^1.1.1",

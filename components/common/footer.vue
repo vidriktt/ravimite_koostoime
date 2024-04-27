@@ -1,6 +1,6 @@
 <template>
 	<div class="footer">
-		<Disclaimer v-if="!withoutDisclaimer" />
+		<Disclaimer v-if="!withoutDisclaimer" :fixed="true" />
 		<p>Valminud 2024 praktilise lõputöö raames</p>
 	</div>
 </template>
@@ -15,13 +15,10 @@ withDefaults(defineProps<Props>(), { withoutDisclaimer: false });
 
 <style lang="scss" scoped>
 .footer {
-	position: fixed;
-	bottom: $whitespace-xl;
-	display: flex;
-	flex-direction: column;
+	position: absolute;
+	bottom: $whitespace-lg;
 	text-align: center;
 	width: 100%;
-	gap: $whitespace-md;
 
 	p {
 		@include smaller-text;
