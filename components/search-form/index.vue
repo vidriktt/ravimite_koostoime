@@ -51,7 +51,7 @@ const fetchDrugs = async () => {
 			autocompleteValues.value = drugsResponse;
 		}
 	} catch (error) {
-		console.error(error);
+		console.error(error); // eslint-disable-line no-console
 	}
 };
 
@@ -132,7 +132,13 @@ const onSubmit = async () => {
 <style scoped lang="scss">
 .search-form {
 	display: flex;
+	flex-direction: column;
+	align-items: center;
 	gap: $whitespace-sm;
+
+	@media (min-width: $screen-md) {
+		flex-direction: row;
+	}
 
 	&__add-field {
 		@include input(true);
@@ -140,6 +146,11 @@ const onSubmit = async () => {
 
 	&__submit {
 		@include button-primary(true);
+		margin-top: $whitespace-xxs;
+
+		@media (min-width: $screen-md) {
+			margin-top: unset;
+		}
 	}
 }
 </style>

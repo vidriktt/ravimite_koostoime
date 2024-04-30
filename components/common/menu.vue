@@ -1,9 +1,9 @@
 <template>
-	<div class="menu">
+	<nav class="menu">
 		<NuxtLink to="/">Avaleht</NuxtLink>
 		<NuxtLink to="/info">Abi</NuxtLink>
 		<NuxtLink to="/results">Otsing</NuxtLink>
-	</div>
+	</nav>
 </template>
 
 <script setup lang="ts"></script>
@@ -12,7 +12,6 @@
 .menu {
 	display: flex;
 	align-items: center;
-	padding-top: $whitespace-xxs;
 	gap: $whitespace-lg;
 
 	a {

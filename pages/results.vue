@@ -9,7 +9,10 @@
 				"
 				@on-submit="onSubmit"
 			/>
-			<div class="results__container">
+			<div v-if="fetching" class="results__loading">
+				<CommonLoader />
+			</div>
+			<div v-else class="results__container">
 				<h4 v-if="Object.keys(route.query).length > 0">
 					{{
 						interactionsList && interactionsList.length > 0
@@ -33,34 +36,47 @@
 import type { interactions } from '@prisma/client';
 
 const route = useRoute();
+const fetching = ref<boolean>();
 const interactionsList = ref<
 	(interactions & { ravimiregister?: { text: string; url: string } })[]
 >([]);
 
 onMounted(async () => {
 	if (Object.keys(route.query).length > 0) {
-		await fetchInteractions();
+		await onSubmit();
+	}
+});
+
+onUpdated(() => {
+	if (Object.keys(route.query).length === 0) {
+		fetching.value = false;
+		interactionsList.value = [];
 	}
 });
 
 const onSubmit = async () => {
+	fetching.value = true;
 	await fetchInteractions();
 };
 
 const fetchInteractions = async () => {
-	try {
-		const response = await useFetch('/api/interactions', {
-			query: { drugs: Object.values(route.query) },
-		});
+	const { error, data } = await useFetch('/api/interactions', {
+		query: { drugs: Object.values(route.query) },
+	});
 
-		if (response.data?.value) {
-			interactionsList.value = response.data.value;
-			await fetchTranslations();
-			await fetchRavimiregisterData();
-		}
-	} catch (error) {
-		console.error(error); // eslint-disable-line no-console
+	if (error?.value) {
+		console.error(error.value); // eslint-disable-line no-console
 	}
+
+	if (data?.value) {
+		interactionsList.value = data.value;
+		await fetchTranslations();
+		await fetchRavimiregisterData();
+	} else {
+		console.warn('Interactions not found.'); // eslint-disable-line no-console
+	}
+
+	fetching.value = false;
 };
 
 const fetchTranslations = async () => {
@@ -126,43 +142,68 @@ const fetchTranslations = async () => {
 };
 
 const fetchRavimiregisterData = async () => {
-	try {
-		for (const interaction of interactionsList.value) {
-			const response = await useFetch('/api/ravimiregister-pdf', {
-				query: {
-					// @ts-ignore
-					atcCode: interaction.drugs[0].atc,
-					// @ts-ignore
-					drugName: interaction.drugs[0].toimeaine,
-				},
-			});
+	for (const interaction of interactionsList.value) {
+		const { error, data } = await useFetch('/api/ravimiregister-pdf', {
+			query: {
+				// @ts-ignore
+				atcCodes: interaction.drugs.map((drug) => drug.atc),
+				// @ts-ignore
+				drugNames: interaction.drugs.map((drug) => drug.toimeaine),
+			},
+		});
 
-			if (response.data?.value) {
-				interaction.ravimiregister = response.data.value;
-			}
+		if (error?.value) {
+			console.error(error.value); // eslint-disable-line no-console
 		}
-	} catch (error) {
-		console.error(error); // eslint-disable-line no-console
+
+		if (data?.value) {
+			interaction.ravimiregister = data.value;
+		} else {
+			console.warn('No Ravimiregister match found.'); // eslint-disable-line no-console
+		}
 	}
 };
+
+if (process.client) {
+	if (Object.keys(route.query).length > 0) {
+		onSubmit();
+	}
+}
 </script>
 
 <style scoped lang="scss">
 .results {
-	margin: $whitespace-xl $whitespace-xl 220px;
+	margin: $whitespace-lg $whitespace-sm 200px;
+
+	@media (min-width: $screen-md) {
+		margin: $whitespace-xl $whitespace-xl 220px;
+	}
 
 	&__container {
 		display: flex;
 		flex-direction: column;
-		width: 55vw;
+		width: 100%;
 		margin: $whitespace-xxxl auto;
+
+		@media (min-width: $screen-md) {
+			width: 55vw;
+		}
 
 		h4 {
 			@include heading-4;
 			color: $color-text;
-			font-size: 28px;
 			text-transform: uppercase;
+
+			@media (min-width: $screen-md) {
+				font-size: 28px;
+			}
 		}
+	}
+
+	&__loading {
+		display: flex;
+		justify-content: center;
+		margin-top: $whitespace-xxxl;
 	}
 }
 </style>

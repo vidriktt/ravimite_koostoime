@@ -4,7 +4,18 @@
 	</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+useHead({
+	title: 'Ravimite koostoime',
+	meta: [
+		{
+			name: 'description',
+			content:
+				'Eestikeelne ravimite koostoime kontrollimise veebirakendus. Valminud 2024 praktilise raames lõputöö, autor Vidrik Toom Tabas.',
+		},
+	],
+});
+</script>
 
 <style lang="scss">
 @font-face {

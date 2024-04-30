@@ -1,7 +1,6 @@
 <template>
 	<div class="layout-default">
 		<CommonHeader :without-logo="withoutLogo" />
-		<CommonMobileMenu />
 		<slot />
 		<CommonFooter :without-disclaimer="withoutDisclaimer" />
 	</div>
@@ -21,6 +20,7 @@ withDefaults(defineProps<Props>(), {
 
 <style lang="scss" scoped>
 .layout-default {
-	min-height: 100vh;
+	min-height: calc(100vh - $whitespace-xxxl);
+	margin-bottom: $whitespace-xxxl;
 }
 </style>

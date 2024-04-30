@@ -25,12 +25,19 @@ withDefaults(defineProps<Props>(), { text: undefined, fixed: false });
 	display: flex;
 	align-self: center;
 	width: fit-content;
-	margin-top: $whitespace-xxxl;
-	padding: $whitespace-xs $whitespace-md;
+	margin-top: $whitespace-xl;
+	padding: $whitespace-xxs $whitespace-xs;
 	background-color: $color-error;
 	color: $color-text-light;
 	border-radius: $border-radius;
 	text-align: center;
+	font-size: 15px;
+
+	@media (min-width: $screen-md) {
+		margin-top: $whitespace-xxxl;
+		padding: $whitespace-xs $whitespace-md;
+		font-size: 16px;
+	}
 
 	svg {
 		vertical-align: text-top;
@@ -40,10 +47,16 @@ withDefaults(defineProps<Props>(), { text: undefined, fixed: false });
 
 .fixed {
 	position: fixed;
-	bottom: $whitespace-xxxl;
+	bottom: $whitespace-xl;
 	left: 50%;
 	transform: translateX(-50%);
-	margin-top: 0;
-	width: max-content;
+	width: calc(100% - 2 * $whitespace-sm);
+	margin: 0;
+	font-size: 14px;
+
+	@media (min-width: $screen-md) {
+		bottom: $whitespace-xxxl;
+		width: max-content;
+	}
 }
 </style>

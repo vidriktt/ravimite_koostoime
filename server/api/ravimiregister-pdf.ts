@@ -66,53 +66,74 @@ function extractTextBetweenHeadings(pdfText: string): string {
 	}
 }
 
+async function processDrug(
+	atcCode: string,
+	drugName: string,
+): Promise<{ url: string; text: string } | undefined> {
+	try {
+		const ravimid = path.resolve('./data/pakendid.csv');
+
+		const matchingRow = await new Promise<Row | undefined>(
+			(resolve, reject) => {
+				fs.createReadStream(ravimid, { encoding: 'utf-8' })
+					.pipe(csv({ separator: ';' }))
+					.on('data', (row: Row) => {
+						const rowIncludes: boolean =
+							(atcCode &&
+								row['ATC kood'].toLowerCase() ===
+									(atcCode as string).toLowerCase()) ||
+							(!atcCode &&
+								row['Toimeaine nimetus'].toLowerCase() ===
+									(drugName as string).toLowerCase());
+
+						if (
+							rowIncludes &&
+							row.PIL &&
+							row.PIL.trim().startsWith('PIL_')
+						) {
+							resolve(row);
+						}
+					})
+					.on('end', () => resolve(undefined))
+					.on('error', (err) => reject(err));
+			},
+		);
+
+		if (!matchingRow) {
+			// eslint-disable-next-line no-console
+			console.error(
+				'No matching row with valid "pakendi infoleht" found for:',
+				{ atcCode, drugName },
+			);
+			return undefined;
+		}
+
+		const text = await fetchAndExtractText(matchingRow.PIL);
+		return {
+			url: `https://ravimiregister.ee/Data/PIL/${matchingRow.PIL}`,
+			text,
+		};
+	} catch (error) {
+		console.error('Error processing data:', error); // eslint-disable-line no-console
+		return undefined;
+	}
+}
+
 export default eventHandler(
 	async (event): Promise<{ url: string; text: string } | undefined> => {
-		const { atcCode, drugName } = getQuery(event);
+		const {
+			atcCodes,
+			drugNames,
+		}: { atcCodes: string[]; drugNames: string[] } = getQuery(event);
 
-		try {
-			const ravimid = path.resolve('./data/pakendid.csv');
+		for (let i = 0; i < atcCodes?.length; i++) {
+			const result = await processDrug(atcCodes[i], drugNames[i]);
 
-			const matchingRow = await new Promise<Row | undefined>(
-				(resolve, reject) => {
-					fs.createReadStream(ravimid, { encoding: 'utf-8' })
-						.pipe(csv({ separator: ';' }))
-						.on('data', (row: Row) => {
-							const rowIncludes: boolean =
-								(atcCode &&
-									row['ATC kood'].toLowerCase() ===
-										(atcCode as string).toLowerCase()) ||
-								(!atcCode &&
-									row['Toimeaine nimetus'].toLowerCase() ===
-										(drugName as string).toLowerCase());
-
-							if (
-								rowIncludes &&
-								row.PIL &&
-								row.PIL.trim().startsWith('PIL_')
-							) {
-								resolve(row);
-							}
-						})
-						.on('end', () => resolve(undefined))
-						.on('error', (err) => reject(err));
-				},
-			);
-
-			if (!matchingRow) {
-				throw new Error(
-					'No matching row with valid "pakendi infoleht" found',
-				);
+			if (result) {
+				return result;
 			}
-
-			const text = await fetchAndExtractText(matchingRow.PIL);
-			return {
-				url: `https://ravimiregister.ee/Data/PIL/${matchingRow.PIL}`,
-				text,
-			};
-		} catch (error) {
-			console.error('Error processing data:', error); // eslint-disable-line no-console
-			throw new Error('Failed to process data');
 		}
+
+		return undefined;
 	},
 );
