@@ -1,5 +1,4 @@
-import fs from 'fs';
-import path from 'path';
+import { createClient } from '@supabase/supabase-js';
 import csv from 'csv-parser';
 import axios from 'axios';
 // @ts-ignore
@@ -10,6 +9,11 @@ interface Row {
 	'Toimeaine nimetus': string;
 	PIL: string;
 }
+
+const supabase = createClient(
+	process.env.SUPABASE_URL as string,
+	process.env.SUPABASE_KEY as string,
+);
 
 async function fetchAndExtractText(path: string): Promise<string> {
 	try {
@@ -71,11 +75,17 @@ async function processDrug(
 	drugName: string,
 ): Promise<{ url: string; text: string } | undefined> {
 	try {
-		const ravimid = path.resolve('./data/pakendid.csv');
+		const { data: pakendidUrl } = supabase.storage
+			.from('pakendid')
+			.getPublicUrl('pakendid.csv');
+
+		const response = await axios.get(pakendidUrl.publicUrl, {
+			responseType: 'stream',
+		});
 
 		const matchingRow = await new Promise<Row | undefined>(
 			(resolve, reject) => {
-				fs.createReadStream(ravimid, { encoding: 'utf-8' })
+				response.data
 					.pipe(csv({ separator: ';' }))
 					.on('data', (row: Row) => {
 						const rowIncludes: boolean =
@@ -95,7 +105,7 @@ async function processDrug(
 						}
 					})
 					.on('end', () => resolve(undefined))
-					.on('error', (err) => reject(err));
+					.on('error', (err: Error) => reject(err));
 			},
 		);
 
@@ -108,10 +118,9 @@ async function processDrug(
 			return undefined;
 		}
 
-		const text = await fetchAndExtractText(matchingRow.PIL);
 		return {
 			url: `https://ravimiregister.ee/Data/PIL/${matchingRow.PIL}`,
-			text,
+			text: await fetchAndExtractText(matchingRow.PIL),
 		};
 	} catch (error) {
 		console.error('Error processing data:', error); // eslint-disable-line no-console
