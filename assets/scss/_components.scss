@@ -92,7 +92,7 @@
 // buttons
 @mixin button-primary($short: false) {
 	all: unset;
-	padding: $whitespace-sm $whitespace-lg;
+	padding: $whitespace-xs $whitespace-md;
 	border-radius: $border-radius;
 	background: $color-secondary-3;
 	color: $color-text-light;
@@ -122,7 +122,11 @@
 	}
 
 	@if $short {
-		padding: $whitespace-step $whitespace-md !important;
+		padding: $whitespace-xxs $whitespace-md !important;
+
+		@media (min-width: $screen-md) {
+			padding: $whitespace-step $whitespace-md !important;
+		}
 	}
 }
 
@@ -161,7 +165,8 @@
 @mixin input($button: false) {
 	all: unset;
 	height: fit-content;
-	padding: $whitespace-step $whitespace-sm;
+	min-width: 180px;
+	padding: $whitespace-xxs $whitespace-md;
 	border-radius: $border-radius;
 	background: $color-secondary-light;
 	font-family: $font-inter;
@@ -176,8 +181,13 @@
 		outline: 0.15rem solid $color-primary;
 	}
 
+	@media (min-width: $screen-md) {
+		padding: $whitespace-step $whitespace-sm;
+	}
+
 	@if $button {
-		padding: 0 calc($whitespace-xxs + 2px);
+		padding: $whitespace-step calc($whitespace-xs + 2px);
+		min-width: unset;
 		color: rgba($color-text, 0.7);
 		font-size: 1.5rem;
 		line-height: 1.95rem;
@@ -185,6 +195,10 @@
 		&:hover {
 			filter: brightness(0.95);
 			color: $color-text;
+		}
+
+		@media (min-width: $screen-md) {
+			padding: 0 calc($whitespace-xxs + 2px);
 		}
 	}
 }

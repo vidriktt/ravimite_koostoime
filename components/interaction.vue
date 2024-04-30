@@ -46,12 +46,12 @@
 				<h5>Kliiniline tagajärg</h5>
 				<p>{{ interaction.clinical_consequence }}</p>
 			</template>
-			<hr v-if="interaction.clinical_consequence" />
+			<hr v-if="interaction.situation_criterion" />
 			<template v-if="interaction.situation_criterion">
 				<h5>Olukorra kriteerium</h5>
 				<p>{{ interaction.situation_criterion }}</p>
 			</template>
-			<hr v-if="interaction.situation_criterion" />
+			<hr v-if="interaction.instructions" />
 			<template v-if="interaction.instructions">
 				<h5>Abinõu</h5>
 				<p>
@@ -65,9 +65,9 @@
 					</span>
 				</p>
 			</template>
-			<hr v-if="interaction.instructions && interaction.ravimiregister" />
+			<hr v-if="interaction.ravimiregister" />
 			<template v-if="interaction.ravimiregister">
-				<h5>Koostoime Ravimiregistri pakendi infolehelt</h5>
+				<h5>Koostoime Ravimi&shy;registri pakendi infolehelt</h5>
 				<p class="interaction__content--ravimiregister">
 					{{ interaction.ravimiregister.text }}<br /><br />
 					<a :href="interaction.ravimiregister.url" target="_blank">
@@ -108,10 +108,15 @@ const formatInstructions = (instruction: string) => {
 .interaction {
 	display: flex;
 	flex-direction: column;
-	margin-top: $whitespace-xl;
-	padding: $whitespace-lg $whitespace-xl $whitespace-xs;
+	margin-top: $whitespace-md;
+	padding: $whitespace-lg $whitespace-sm $whitespace-xs;
 	border: 1px solid $color-border;
 	border-radius: $border-radius;
+
+	@media (min-width: $screen-md) {
+		margin-top: $whitespace-xl;
+		padding: $whitespace-lg $whitespace-xl $whitespace-xs;
+	}
 
 	&__header {
 		display: flex;
@@ -125,11 +130,21 @@ const formatInstructions = (instruction: string) => {
 
 		h5 {
 			@include heading-5(false);
-			font-size: 22px;
-			line-height: 22px;
+			display: flex;
+			align-items: center;
+
+			@media (min-width: $screen-md) {
+				font-size: 22px;
+				line-height: 22px;
+			}
 
 			svg {
-				margin: 0 $whitespace-xxs;
+				margin: 0 $whitespace-sm;
+
+				@media (min-width: $screen-md) {
+					width: 25px;
+					height: 25px;
+				}
 			}
 		}
 
@@ -162,17 +177,33 @@ const formatInstructions = (instruction: string) => {
 
 	&__content {
 		display: grid;
-		grid-template-columns: 150px auto;
+		grid-template-columns: 105px auto;
 		grid-column-gap: $whitespace-step;
+
+		@media (min-width: $screen-md) {
+			grid-template-columns: 140px auto;
+		}
 
 		h5 {
 			@include heading-5;
-			padding: $whitespace-md;
+			padding: $whitespace-xs;
+			font-size: 18px;
+			line-height: 18px;
+			hyphens: manual;
+
+			@media (min-width: $screen-md) {
+				padding: $whitespace-md;
+				hyphens: none;
+			}
 		}
 
 		p {
-			padding: $whitespace-md;
+			padding: $whitespace-xs;
 			line-height: 20px;
+
+			@media (min-width: $screen-md) {
+				padding: $whitespace-md;
+			}
 
 			span:not(:first-child) {
 				display: block;

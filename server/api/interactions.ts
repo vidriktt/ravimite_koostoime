@@ -24,20 +24,40 @@ export default eventHandler(async (event) => {
 		});
 	}
 
-	const interactionIdsArray = interactionIds.map(
-		(interactionId) => interactionId.id,
-	);
+	const uniqueInteractions = new Map();
 
-	const interactions = await prisma.interactions.findMany({
-		where: {
-			id: {
-				in: interactionIdsArray,
+	for (const interactionId of interactionIds) {
+		const interaction = await prisma.interactions.findUnique({
+			where: {
+				id: interactionId.id,
 			},
-		},
-		include: {
-			drugs: true,
-		},
-	});
+			include: {
+				drugs: {
+					where: {
+						toimeaine: {
+							in: queryDrugs,
+						},
+					},
+				},
+			},
+		});
+
+		if (interaction) {
+			const interactionKey = JSON.stringify({
+				severity: interaction.severity,
+				severity_value: interaction.severity_value,
+				situation_criterion: interaction.situation_criterion,
+				clinical_consequence: interaction.clinical_consequence,
+				instructions: interaction.instructions,
+			});
+
+			if (!uniqueInteractions.has(interactionKey)) {
+				uniqueInteractions.set(interactionKey, interaction);
+			}
+		}
+	}
+
+	const interactions = Array.from(uniqueInteractions.values());
 
 	if (!interactions || interactions.length === 0) {
 		throw createError({

@@ -16,9 +16,13 @@ withDefaults(defineProps<Props>(), { withoutDisclaimer: false });
 <style lang="scss" scoped>
 .footer {
 	position: absolute;
-	bottom: $whitespace-lg;
-	text-align: center;
+	bottom: $whitespace-sm;
 	width: 100%;
+	text-align: center;
+
+	@media (min-width: $screen-md) {
+		bottom: $whitespace-lg;
+	}
 
 	p {
 		@include smaller-text;
