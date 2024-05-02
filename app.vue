@@ -11,7 +11,7 @@ useHead({
 		{
 			name: 'description',
 			content:
-				'Eestikeelne ravimite koostoime kontrollimise veebirakendus. Valminud 2024 praktilise raames lõputöö, autor Vidrik Toom Tabas.',
+				'Eestikeelne ravimite koostoime kontrollimise veebirakendus. Valminud 2024 praktilise lõputöö raames, autor Vidrik Toom Tabas.',
 		},
 	],
 });
