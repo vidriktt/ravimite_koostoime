@@ -96,11 +96,7 @@ async function processDrug(
 								row['Toimeaine nimetus'].toLowerCase() ===
 									(drugName as string).toLowerCase());
 
-						if (
-							rowIncludes &&
-							row.PIL &&
-							row.PIL.trim().startsWith('PIL_')
-						) {
+						if (rowIncludes && row.PIL) {
 							resolve(row);
 						}
 					})
@@ -118,10 +114,17 @@ async function processDrug(
 			return undefined;
 		}
 
-		return {
-			url: `https://ravimiregister.ee/Data/PIL/${matchingRow.PIL}`,
-			text: await fetchAndExtractText(matchingRow.PIL),
-		};
+		if (matchingRow.PIL.trim().startsWith('PIL_')) {
+			return {
+				url: `https://ravimiregister.ee/Data/PIL/${matchingRow.PIL}`,
+				text: await fetchAndExtractText(matchingRow.PIL),
+			};
+		} else {
+			return {
+				url: matchingRow.PIL,
+				text: '',
+			};
+		}
 	} catch (error) {
 		console.error('Error processing data:', error); // eslint-disable-line no-console
 		return undefined;
@@ -139,7 +142,13 @@ export default eventHandler(
 			const result = await processDrug(atcCodes[i], drugNames[i]);
 
 			if (result) {
-				return result;
+				if (result.text) {
+					return result;
+				}
+
+				if (i === atcCodes.length - 1) {
+					return result;
+				}
 			}
 		}
 

@@ -1,6 +1,6 @@
 <template>
 	<div class="mobile-menu">
-		<button class="mobile-menu__btn" @click="openMenu">
+		<button class="mobile-menu__btn" aria-label="Menu" @click="openMenu">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="24"
