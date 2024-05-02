@@ -13,18 +13,19 @@
 				<CommonLoader />
 			</div>
 			<div v-else class="results__container">
-				<h4 v-if="Object.keys(route.query).length > 0">
+				<h1 v-if="Object.keys(route.query).length > 0">
 					{{
 						interactionsList && interactionsList.length > 0
 							? 'Leitud koostoimed:'
 							: 'Koostoimed puuduvad'
 					}}
-				</h4>
+				</h1>
 				<div v-if="interactionsList && interactionsList.length > 0">
 					<Interaction
 						v-for="(interaction, index) in interactionsList"
 						:key="index"
 						:interaction="interaction"
+						:ravimiregister-pdf-fetching="ravimiregisterPdfFetching"
 					/>
 				</div>
 			</div>
@@ -37,6 +38,7 @@ import type { interactions } from '@prisma/client';
 
 const route = useRoute();
 const fetching = ref<boolean>();
+const ravimiregisterPdfFetching = ref<boolean>(false);
 const interactionsList = ref<
 	(interactions & { ravimiregister?: { text: string; url: string } })[]
 >([]);
@@ -68,15 +70,20 @@ const fetchInteractions = async () => {
 		console.error(error.value); // eslint-disable-line no-console
 	}
 
-	if (data?.value) {
-		interactionsList.value = data.value;
-		await fetchTranslations();
-		await fetchRavimiregisterData();
-	} else {
+	if (!data?.value) {
 		console.warn('Interactions not found.'); // eslint-disable-line no-console
+		return;
 	}
 
+	interactionsList.value = data.value;
+	await fetchTranslations();
+
 	fetching.value = false;
+	ravimiregisterPdfFetching.value = true;
+
+	await fetchRavimiregisterData();
+
+	ravimiregisterPdfFetching.value = false;
 };
 
 const fetchTranslations = async () => {
@@ -189,7 +196,7 @@ if (process.client) {
 			width: 55vw;
 		}
 
-		h4 {
+		h1 {
 			@include heading-4;
 			color: $color-text;
 			text-transform: uppercase;

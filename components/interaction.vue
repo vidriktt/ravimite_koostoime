@@ -1,7 +1,7 @@
 <template>
 	<div class="interaction">
 		<div class="interaction__header">
-			<h5>
+			<h2>
 				{{
 					// @ts-ignore
 					interaction.drugs[0].toimeaine
@@ -11,7 +11,7 @@
 					// @ts-ignore
 					interaction.drugs[1].toimeaine
 				}}
-			</h5>
+			</h2>
 			<CommonTooltip
 				:tooltip-text="
 					interaction.severity_value === '2'
@@ -43,17 +43,17 @@
 		</div>
 		<div class="interaction__content">
 			<template v-if="interaction.clinical_consequence">
-				<h5>Kliiniline tagajärg</h5>
+				<h3>Kliiniline tagajärg</h3>
 				<p>{{ interaction.clinical_consequence }}</p>
 			</template>
 			<hr v-if="interaction.situation_criterion" />
 			<template v-if="interaction.situation_criterion">
-				<h5>Olukorra kriteerium</h5>
+				<h3>Olukorra kriteerium</h3>
 				<p>{{ interaction.situation_criterion }}</p>
 			</template>
 			<hr v-if="interaction.instructions" />
 			<template v-if="interaction.instructions">
-				<h5>Abinõu</h5>
+				<h3>Abinõu</h3>
 				<p>
 					<span
 						v-for="(instruction, index) in formatInstructions(
@@ -65,13 +65,28 @@
 					</span>
 				</p>
 			</template>
+			<div
+				v-if="ravimiregisterPdfFetching"
+				class="interaction__content--loading"
+			>
+				<CommonLoader />
+			</div>
 			<hr v-if="interaction.ravimiregister" />
 			<template v-if="interaction.ravimiregister">
-				<h5>Koostoime Ravimi&shy;registri pakendi infolehelt</h5>
+				<h3>
+					{{
+						interaction.ravimiregister.text
+							? 'Koostoime Ravimi&shy;registri pakendi infolehelt'
+							: 'Ravimi&shy;registri pakendi infoleht'
+					}}
+				</h3>
 				<p class="interaction__content--ravimiregister">
-					{{ interaction.ravimiregister.text }}<br /><br />
+					{{ interaction.ravimiregister.text }}
+					<template v-if="interaction.ravimiregister.text">
+						<br /><br />
+					</template>
 					<a :href="interaction.ravimiregister.url" target="_blank">
-						Pakendi infoleht
+						Link pakendi infolehele
 					</a>
 				</p>
 			</template>
@@ -86,6 +101,7 @@ interface Props {
 	interaction: interactions & {
 		ravimiregister?: { text: string; url: string };
 	};
+	ravimiregisterPdfFetching: boolean;
 }
 
 defineProps<Props>();
@@ -128,7 +144,7 @@ const formatInstructions = (instruction: string) => {
 		margin-bottom: $whitespace-md;
 		text-align: center;
 
-		h5 {
+		h2 {
 			@include heading-5(false);
 			display: flex;
 			align-items: center;
@@ -184,7 +200,7 @@ const formatInstructions = (instruction: string) => {
 			grid-template-columns: 140px auto;
 		}
 
-		h5 {
+		h3 {
 			@include heading-5;
 			padding: $whitespace-xs;
 			font-size: 18px;
@@ -215,6 +231,14 @@ const formatInstructions = (instruction: string) => {
 			grid-column: 1 / span 2;
 			border: none;
 			border-top: 1px solid $color-border;
+		}
+
+		&--loading {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			grid-column: 1 / span 2;
+			margin: $whitespace-md 0;
 		}
 
 		&--ravimiregister {
