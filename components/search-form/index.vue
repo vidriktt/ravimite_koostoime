@@ -11,6 +11,7 @@
 			@focus-field="onFocus"
 			@update-form-field="updateFormField"
 			@update-field-invalid="updateFieldInvalid"
+			@remove-field="removeField"
 		/>
 		<button
 			v-if="formFields.length < 4"
@@ -66,6 +67,11 @@ const addField = () => {
 		formFields.value.push('');
 		fieldInvalid.value.push(false);
 	}
+};
+
+const removeField = (index: number) => {
+	formFields.value.splice(index, 1);
+	fieldInvalid.value.splice(index, 1);
 };
 
 const validateForm = () => {
