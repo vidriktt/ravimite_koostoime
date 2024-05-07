@@ -1,7 +1,7 @@
 <template>
 	<div class="footer">
 		<Disclaimer v-if="!withoutDisclaimer" :fixed="true" />
-		<p>Valminud 2024 praktilise lõputöö raames</p>
+		<p>Valminud 2024 Vidrik Toom Tabase bakalaureusetöö raames</p>
 	</div>
 </template>
 

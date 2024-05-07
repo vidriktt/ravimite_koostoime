@@ -8,6 +8,13 @@
 			@input="filterAutocomplete"
 			@blur="hideAutocomplete"
 		/>
+		<div
+			v-if="index > 1"
+			class="search-form__field--remove"
+			@click="() => emit('removeField', index)"
+		>
+			<span>+</span>
+		</div>
 		<transition name="fade">
 			<ul
 				v-show="showAutocomplete"
@@ -43,6 +50,7 @@ const emit = defineEmits([
 	'focusField',
 	'updateFormField',
 	'updateFieldInvalid',
+	'removeField',
 ]);
 
 const inputValue = ref<string>(props.formFields[props.index]);
@@ -92,6 +100,30 @@ const hideAutocomplete = () => {
 
 	input {
 		@include input;
+	}
+
+	&--remove {
+		position: absolute;
+		top: $whitespace-step;
+		right: $whitespace-step;
+		width: fit-content;
+		padding: $whitespace-xs;
+		background: $color-secondary-light;
+		color: rgba($color-text, 0.6);
+		font-size: 1.5rem;
+		line-height: 1.5rem;
+		cursor: pointer;
+
+		&:hover {
+			color: $color-text;
+		}
+
+		span {
+			position: absolute;
+			top: 0;
+			right: 25%;
+			transform: rotate(45deg);
+		}
 	}
 
 	&--autocomplete {

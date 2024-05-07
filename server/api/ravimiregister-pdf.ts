@@ -15,6 +15,40 @@ const supabase = createClient(
 	process.env.SUPABASE_KEY as string,
 );
 
+let pakendidUrl: { publicUrl: string } | undefined;
+let pakendidData: Row[] | undefined;
+
+async function getPakendidUrl(): Promise<{ publicUrl: string }> {
+	if (!pakendidUrl) {
+		const { data } = await supabase.storage
+			.from('pakendid')
+			.getPublicUrl('pakendid.csv');
+		pakendidUrl = data;
+	}
+	return pakendidUrl;
+}
+
+async function getPakendidData(): Promise<Row[]> {
+	if (!pakendidData) {
+		const url = await getPakendidUrl();
+		const response = await axios.get(url.publicUrl, {
+			responseType: 'stream',
+		});
+		const rows: Row[] = [];
+		await new Promise<void>((resolve, reject) => {
+			response.data
+				.pipe(csv({ separator: ';' }))
+				.on('data', (row: Row) => {
+					rows.push(row);
+				})
+				.on('end', () => resolve())
+				.on('error', (err: Error) => reject(err));
+		});
+		pakendidData = rows;
+	}
+	return pakendidData;
+}
+
 async function fetchAndExtractText(path: string): Promise<string> {
 	try {
 		const response = await axios.get(
@@ -75,35 +109,18 @@ async function processDrug(
 	drugName: string,
 ): Promise<{ url: string; text: string } | undefined> {
 	try {
-		const { data: pakendidUrl } = supabase.storage
-			.from('pakendid')
-			.getPublicUrl('pakendid.csv');
+		const rows = await getPakendidData();
 
-		const response = await axios.get(pakendidUrl.publicUrl, {
-			responseType: 'stream',
+		const matchingRow = rows.find((row) => {
+			const rowIncludes: boolean =
+				(atcCode &&
+					row['ATC kood'].toLowerCase() === atcCode.toLowerCase()) ||
+				(!atcCode &&
+					row['Toimeaine nimetus'].toLowerCase() ===
+						drugName.toLowerCase());
+
+			return rowIncludes && row.PIL;
 		});
-
-		const matchingRow = await new Promise<Row | undefined>(
-			(resolve, reject) => {
-				response.data
-					.pipe(csv({ separator: ';' }))
-					.on('data', (row: Row) => {
-						const rowIncludes: boolean =
-							(atcCode &&
-								row['ATC kood'].toLowerCase() ===
-									(atcCode as string).toLowerCase()) ||
-							(!atcCode &&
-								row['Toimeaine nimetus'].toLowerCase() ===
-									(drugName as string).toLowerCase());
-
-						if (rowIncludes && row.PIL) {
-							resolve(row);
-						}
-					})
-					.on('end', () => resolve(undefined))
-					.on('error', (err: Error) => reject(err));
-			},
-		);
 
 		if (!matchingRow) {
 			// eslint-disable-next-line no-console
