@@ -15,10 +15,13 @@
 			<CommonTooltip
 				:tooltip-text="
 					interaction.severity_value === '2'
-						? 'Kõrge kliinilise tähtsusega.<br>Suur koostoime risk. Arst peaks olukorda regulaarselt jälgima, vajadusel kaaluda alternatiivset ravimit.'
+						? 'Kõrge kliinilise tähtsusega.<br />' +
+							'Suur koostoime risk. Arst peaks olukorda regulaarselt jälgima, vajadusel kaaluda alternatiivset ravimit.'
 						: interaction.severity_value === '2'
-							? 'Mõõduka kliinilise tähtsusega.<br>Võimalusel hoiduda kombinatsioonest, kasutades neid ainult erijuhtudel. Arsti jälgimine on tungivalt soovitatav.'
-							: 'Minimaalse kliinilise tähtsusega.<br>Koostoime on ebatõenäoline, väike või ebaoluline.'
+							? 'Mõõduka kliinilise tähtsusega.<br />' +
+								'Võimalusel hoiduda kombinatsioonest, kasutades neid ainult erijuhtudel. Arsti jälgimine on tungivalt soovitatav.'
+							: 'Minimaalse kliinilise tähtsusega.<br />' +
+								'Koostoime on ebatõenäoline, väike või ebaoluline.'
 				"
 			>
 				<div
@@ -203,6 +206,7 @@ const formatInstructions = (instruction: string) => {
 		h3 {
 			@include heading-5;
 			padding: $whitespace-xs;
+			color: $color-secondary-3;
 			font-size: 18px;
 			line-height: 18px;
 			hyphens: manual;
