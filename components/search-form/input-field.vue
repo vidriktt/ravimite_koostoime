@@ -142,6 +142,9 @@ const hideAutocomplete = () => {
 
 		li {
 			padding: $whitespace-xxs $whitespace-sm;
+			word-wrap: break-word;
+			overflow-wrap: break-word;
+			hyphens: auto;
 			cursor: pointer;
 			transition: all $transition;
 

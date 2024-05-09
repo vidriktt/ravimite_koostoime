@@ -4,7 +4,7 @@
 			<IconsWarning />
 			See <b>leht on teoreetiline</b> ning ükski saadud tulemus
 			<b>ei ole lõplik meditsiiniline vastus</b>.<br />Oluliste küsimuste
-			ja probleemide korral pöörduge meditsiinilise kõrgharidusega
+			ja probleemide korral pöörduge meditsiinilise haridusega
 			spetsialisti juurde!
 		</p>
 		<p v-if="text" v-html="text"></p>

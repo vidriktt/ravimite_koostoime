@@ -11,6 +11,7 @@
 			/>
 			<div v-if="fetching" class="results__loading">
 				<CommonLoader />
+				<p>Otsing võib võtta hetke aega.</p>
 			</div>
 			<div v-else class="results__container">
 				<h1 v-if="Object.keys(route.query).length > 0">
@@ -209,8 +210,19 @@ if (process.client) {
 
 	&__loading {
 		display: flex;
+		flex-direction: column;
 		justify-content: center;
-		margin-top: $whitespace-xxxl;
+		align-items: center;
+		margin: $whitespace-xxxl;
+
+		div {
+			margin: 0 auto;
+		}
+
+		p {
+			margin-top: $whitespace-md;
+			text-align: center;
+		}
 	}
 }
 </style>

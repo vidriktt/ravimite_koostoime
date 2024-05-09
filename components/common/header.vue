@@ -47,6 +47,8 @@ onMounted(() => {
 	}
 
 	&__logo {
+		min-height: 58px;
+
 		a {
 			text-decoration: none;
 			transition: all $transition;

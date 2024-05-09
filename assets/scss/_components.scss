@@ -2,8 +2,8 @@
 @mixin heading() {
 	font-family: 'Lato', sans-serif;
 	font-weight: 700;
-	font-size: 80px;
-	line-height: 80px;
+	font-size: 64px;
+	line-height: 64px;
 	font-style: normal;
 	letter-spacing: 0.03rem;
 	color: $color-primary;
@@ -133,6 +133,7 @@
 @mixin button-link($grayscale: true) {
 	all: unset;
 	border-bottom: 1px solid transparent;
+	line-height: 1.2;
 	cursor: pointer;
 	transition: all 100ms;
 
@@ -165,7 +166,7 @@
 @mixin input($button: false) {
 	all: unset;
 	height: fit-content;
-	min-width: 180px;
+	min-width: 200px;
 	padding: $whitespace-xxs $whitespace-md;
 	border-radius: $border-radius;
 	background: $color-secondary-light;
