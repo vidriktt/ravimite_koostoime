@@ -73,6 +73,7 @@ const fetchInteractions = async () => {
 
 	if (!data?.value) {
 		console.warn('Interactions not found.'); // eslint-disable-line no-console
+		fetching.value = false;
 		return;
 	}
 
