@@ -111,7 +111,7 @@
 					tagajärg" ning võimalikke väljasid "Olukorra kriteerium" ja
 					"Abinõu".<br />
 					Lisaks on välja toodud info Ravimiregistri pakendi
-					infolehelt ravimite koostoime kohta, kui see eksiteerib.
+					infolehelt ravimite koostoime kohta, kui see eksisteerib.
 					Edasise huvi ja ohutuse tarvis on lisatud link tervele
 					pakendi infolehele.
 				</p>
@@ -136,7 +136,7 @@
 		@include heading-4;
 		margin: $whitespace-sm 0;
 		color: $color-text;
-		line-height: 18px;
+		line-height: 22px;
 		text-transform: uppercase;
 	}
 

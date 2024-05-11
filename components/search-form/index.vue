@@ -27,8 +27,10 @@
 </template>
 
 <script setup lang="ts">
+import type { LocationQuery } from 'vue-router';
+
 interface Props {
-	query?: Record<string, string>;
+	query?: LocationQuery;
 }
 
 const props = withDefaults(defineProps<Props>(), { query: undefined });
@@ -39,7 +41,9 @@ const fieldInvalid = ref<boolean[]>([]);
 const autocompleteValues = ref<string[]>([]);
 
 onMounted(() => {
-	formFields.value = props.query ? Object.values(props.query) : ['', ''];
+	formFields.value = props.query
+		? (Object.values(props.query) as string[])
+		: ['', ''];
 	fieldInvalid.value = Array(formFields.value.length).fill(false);
 });
 
