@@ -18,7 +18,7 @@
 					{{
 						interactionsList && interactionsList.length > 0
 							? 'Leitud koostoimed:'
-							: 'Koostoimed puuduvad'
+							: 'Koostoimeid ei leitud.'
 					}}
 				</h1>
 				<div v-if="interactionsList && interactionsList.length > 0">
