@@ -3,7 +3,8 @@
 		<div class="info">
 			<h1>Siit leiad tekkinud<br />küsimustele vastuseid</h1>
 			<h2>
-				Lisaks informaatseid ja abistavaid viiteid välistele lehtedele
+				Lisaks informaatiivseid ja abistavaid viiteid välistele
+				lehtedele
 			</h2>
 			<div class="info__block">
 				<p>
