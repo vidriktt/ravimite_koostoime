@@ -1,0 +1,13 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    - cron: '0 0 */6 * *'
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Call Netlify Function
+        run: curl -X GET https://ravimite-koostoime.netlify.app/.netlify/functions/keep-supabase-alive
