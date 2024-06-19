@@ -4,7 +4,7 @@
 ### Web application for checking drug interactions in Estonian.
 <br>
 
-#### Developed as part of a practical thesis in 2024.
+#### Developed as part of Bachelor's practical thesis in 2024.
 #### Author: Vidrik Toom Tabas
 <br>
 
